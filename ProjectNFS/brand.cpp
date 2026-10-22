@@ -1,10 +1,11 @@
 #include "brand.h"
 
-brand::brand(int cId, const std::string& cName, int cCityId)
+brand::brand(int cId, const std::string& cName, int cCityId, const std::vector<char>& cLogo)
 {
 	id = cId;
 	name = cName;
 	cityId = cCityId;
+	logo = cLogo;
 };
 
 std::string brand::toString()
