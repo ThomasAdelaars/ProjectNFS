@@ -169,6 +169,7 @@
     <ClInclude Include="type.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="brand.cpp" />
     <ClCompile Include="brand.h" />
     <ClCompile Include="city.cpp" />
     <ClCompile Include="country.cpp" />

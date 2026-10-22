@@ -8,7 +8,7 @@ country::country(int cId, const std::string& cName)
 
 std::string country::toString()
 {
-    return name;
+    return std::to_string(id) + " - " + name;
 }
 
 int country::getId()
