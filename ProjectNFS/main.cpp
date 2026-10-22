@@ -8,6 +8,10 @@
 #include "imgui_impl_dx11.h"
 #include "database.h"
 #include "queries.h"
+#include "country.h"
+#include <vector>
+#include <memory>
+#include <mariadb/conncpp.hpp>
 
 #pragma comment(lib, "d3d11.lib")
 
@@ -40,6 +44,18 @@ LRESULT WINAPI WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         return 0;
     }
     return DefWindowProcW(h, m, w, l);
+}
+
+std::vector<country> LoadCountries(Db& db) {
+	std::vector<country> countries;
+	std::vector<std::string> cols;
+	std::vector<std::vector<std::string>> rows;
+	if (db.Query(QUERY_COUNTRIES, cols, rows)) {
+		for (auto& r : rows) {
+			countries.push_back(country(std::stoi(r[0]), r[1]));
+        }
+    }
+	return countries;
 }
 
 int WINAPI wWinMain(HINSTANCE hi, HINSTANCE, PWSTR, int) {
@@ -115,6 +131,14 @@ int WINAPI wWinMain(HINSTANCE hi, HINSTANCE, PWSTR, int) {
                 return db.Query(QUERY_CARS, cols, rows);
                 });
         }
+
+        if (db.conn && !querying && ImGui::Button("Laad landen")) {
+            querying = true;
+            qfut = std::async(std::launch::async, [] {
+                return db.Query(QUERY_COUNTRIES, cols, rows);
+                });
+        }
+
         if (querying && qfut.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             querying = false;
             if (!qfut.get()) status = "Fout: " + db.error;
@@ -153,3 +177,5 @@ int WINAPI wWinMain(HINSTANCE hi, HINSTANCE, PWSTR, int) {
     UnregisterClassW(wc.lpszClassName, hi);
     return 0;
 }
+
+

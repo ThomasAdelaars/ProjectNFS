@@ -18,3 +18,11 @@ JOIN country co ON c.countryID = co.ID
 LEFT JOIN `type` t ON mt.typeID = t.ID
 ORDER BY b.name, m.name
 )sql";
+
+inline const char* QUERY_COUNTRIES = R"sql(
+SELECT 
+    co.name AS 'Land',
+    co.id AS 'ID'
+FROM country co
+ORDER BY co.name
+)sql";
