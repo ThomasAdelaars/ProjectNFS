@@ -60,6 +60,18 @@
     <ClInclude Include="country.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="city.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="modeltype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="third_party\imgui\imgui.cpp">
@@ -86,11 +98,23 @@
     <ClCompile Include="country.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="countryView.cpp">
+    <ClCompile Include="brand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IView.h">
+    <ClCompile Include="brand.h">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="city.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="modeltype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="type.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

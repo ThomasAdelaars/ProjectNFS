@@ -173,8 +173,6 @@
     <ClCompile Include="brand.h" />
     <ClCompile Include="city.cpp" />
     <ClCompile Include="country.cpp" />
-    <ClCompile Include="countryView.cpp" />
-    <ClCompile Include="IView.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="modeltype.cpp" />
