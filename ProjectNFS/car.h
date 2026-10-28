@@ -8,6 +8,8 @@
 class Car : public Entity
 {
 public:
+    int getBrandID() const { return brandID;}
+    void setBrandID(int value) { brandID = value; }
     int getModelID() const
     {
         return modelID;
@@ -70,13 +72,9 @@ public:
 
 private:
     int modelID = 0;
-
+    int brandID = 0;
     std::string modelName;
-
-    // -1 betekent dat er geen type gekoppeld is.
-    int typeID = -1;
-
+    int typeID = -1;        // -1 betekent dat er geen type gekoppeld is.
     std::string typeName;
-
     int powerHP = 0;
 };
