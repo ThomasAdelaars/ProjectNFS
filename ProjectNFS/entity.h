@@ -1,10 +1,23 @@
 #pragma once
 #include <string>
 
-class IEntity{
-	public:
-		virtual int getId() = 0;
-		virtual std::string toString() = 0;
-	private:
-		const int id = 0;
+class Entity
+{
+public:
+	virtual ~Entity() = default;
+
+	int getId() const
+	{
+		return id;
+	}
+
+	void setId(int value)
+	{
+		id = value;
+	}
+
+	virtual std::string getDisplayName() const = 0;
+
+protected:
+	int id = 0;
 };
