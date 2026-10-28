@@ -103,7 +103,7 @@ int main()
     
         // 5. Main loop.
         bool done = false;
-        while (!done)
+        while (!done && !application.shouldClose())
         {
             MSG msg;
             while (::PeekMessageW(&msg, nullptr, 0U, 0U, PM_REMOVE))
