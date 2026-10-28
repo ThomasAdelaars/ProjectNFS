@@ -9,6 +9,45 @@ CarRepository::CarRepository(DatabaseConnection& database)
 {
 }
 
+std::vector<Car> CarRepository::getAll()
+{
+    auto& connection = database.getConnection();
+
+    std::unique_ptr<sql::PreparedStatement> statement(
+        connection.prepareStatement("CALL GetCars()")
+    );
+
+    std::unique_ptr<sql::ResultSet> result(
+        statement->executeQuery()
+    );
+
+    std::vector<Car> cars;
+
+    while (result->next()) {
+        Car car;
+
+        car.setId(result->getInt("carID"));
+        car.setBrandID(result->getInt("brandID"));
+        car.setModelID(result->getInt("modelID"));
+        car.setModelName(result->getString("modelName").c_str());
+
+        if (result->isNull("typeID")) {
+            car.setTypeID(-1);
+            car.setTypeName("");
+        }
+        else {
+            car.setTypeID(result->getInt("typeID"));
+            car.setTypeName(result->getString("typeName").c_str());
+        }
+
+        car.setPowerHP(result->getInt("PowerHP"));
+
+        cars.push_back(std::move(car));
+    }
+
+    return cars;
+}
+
 std::vector<Car> CarRepository::getCarsByBrandId(int brandID)
 {
     auto& connection = database.getConnection();
