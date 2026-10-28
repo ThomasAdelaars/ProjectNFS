@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="brandRepository.h" />
     <ClInclude Include="car.h" />
+    <ClInclude Include="CarBrandUI.h" />
     <ClInclude Include="carRepository.h" />
     <ClInclude Include="DatabaseConnection.h" />
     <ClInclude Include="entity.h" />
@@ -171,8 +172,11 @@
   <ItemGroup>
     <ClCompile Include="brand.h" />
     <ClCompile Include="brandRepository.cpp" />
+    <ClCompile Include="CarBrandUI.cpp" />
     <ClCompile Include="carRepository.cpp" />
     <ClCompile Include="DatabaseConnection.cpp" />
+    <ClCompile Include="LogoCache.cpp" />
+    <ClCompile Include="LogoCache.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="textureLoader.cpp" />
     <ClCompile Include="third_party\imgui\backends\imgui_impl_dx11.cpp" />
