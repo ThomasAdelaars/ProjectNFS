@@ -1,5 +1,6 @@
 #include "DatabaseConnection.h"
-#include "BrandRepository.h"
+#include "brandRepository.h"
+#include "carRepository.h"
 
 #include <iostream>
 #include <exception>
@@ -58,6 +59,23 @@ int main()
         else
         {
             std::cout << "\nEr zijn nog geen merken in de database.\n";
+        }
+
+        CarRepository carRepository(database);
+
+        int selectedBrandID = 3; // Voorbeeld: Ford
+
+        auto cars = carRepository.getCarsByBrandId(selectedBrandID);
+
+        std::cout << "\n=== Auto's van merk ID "
+            << selectedBrandID << " ===\n";
+
+        for (const Car& car : cars)
+        {
+            std::cout << car.getId() << " - "
+                << car.getModelName() << " - "
+                << car.getTypeName() << " - "
+                << car.getPowerHP() << " PK\n";
         }
 
         database.disconnect();

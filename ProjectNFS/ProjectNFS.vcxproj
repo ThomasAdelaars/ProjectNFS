@@ -152,6 +152,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="brandRepository.h" />
+    <ClInclude Include="car.h" />
+    <ClInclude Include="carRepository.h" />
     <ClInclude Include="DatabaseConnection.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="IreadRepository.h" />
@@ -169,6 +171,7 @@
   <ItemGroup>
     <ClCompile Include="brand.h" />
     <ClCompile Include="brandRepository.cpp" />
+    <ClCompile Include="carRepository.cpp" />
     <ClCompile Include="DatabaseConnection.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="textureLoader.cpp" />
