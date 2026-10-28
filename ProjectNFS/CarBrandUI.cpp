@@ -4,7 +4,6 @@ CarBrandUI::CarBrandUI()
     : info_merk("Merk: -")
     , info_founded("Stad: -")
     , info_country("Land: -")
-    , info_models("Modellen: -")
     , status("Klaar")
 {
 }
@@ -29,7 +28,6 @@ void CarBrandUI::setBrandInfo(const std::string& merk, const std::string& founde
     info_merk = merk;
     info_founded = founded;
     info_country = country;
-    info_models = models;
 }
 
 void CarBrandUI::render()
@@ -104,7 +102,6 @@ void CarBrandUI::render()
         ImGui::TextUnformatted(info_merk.c_str());     // safe, no format parsing
         ImGui::TextUnformatted(info_founded.c_str());
         ImGui::TextUnformatted(info_country.c_str());
-        ImGui::TextUnformatted(info_models.c_str());
 
         ImGui::Columns(1);
     }

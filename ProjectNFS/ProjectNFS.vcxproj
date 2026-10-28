@@ -151,6 +151,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="brandRepository.h" />
     <ClInclude Include="car.h" />
     <ClInclude Include="CarBrandUI.h" />
@@ -158,8 +159,8 @@
     <ClInclude Include="DatabaseConnection.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="IreadRepository.h" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="queries.h" />
-    <ClInclude Include="textureLoader.h" />
     <ClInclude Include="third_party\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="third_party\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="third_party\imgui\imconfig.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="third_party\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="brand.h" />
     <ClCompile Include="brandRepository.cpp" />
     <ClCompile Include="CarBrandUI.cpp" />
@@ -178,7 +180,7 @@
     <ClCompile Include="LogoCache.cpp" />
     <ClCompile Include="LogoCache.h" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="textureLoader.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="third_party\imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="third_party\imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="third_party\imgui\imgui.cpp" />

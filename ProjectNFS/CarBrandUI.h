@@ -51,6 +51,5 @@ private:
     std::string info_merk;
     std::string info_founded;
     std::string info_country;
-    std::string info_models;
     std::string status;
 };
