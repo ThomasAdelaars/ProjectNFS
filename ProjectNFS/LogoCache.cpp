@@ -42,7 +42,7 @@ static bool DecodeToTexture(ID3D11Device* device,
     ComPtr<IWICBitmapDecoder> decoder;
     if (FAILED(factory->CreateDecoderFromStream(stream.Get(), nullptr,
         WICDecodeMetadataCacheOnLoad, &decoder)))
-        return false;   // not a recognised image format
+        return false;
 
     ComPtr<IWICBitmapFrameDecode> frame;
     if (FAILED(decoder->GetFrame(0, &frame)))
@@ -92,7 +92,7 @@ static bool DecodeToTexture(ID3D11Device* device,
     if (FAILED(device->CreateShaderResourceView(tex.Get(), &srvDesc, &srv)))
         return false;
 
-    out->srv = srv;            // caller owns this reference
+    out->srv = srv;
     out->width = (int)w;
     out->height = (int)h;
     return true;
@@ -102,11 +102,11 @@ LogoTexture LogoCache::get(int brandId, const unsigned char* data, std::size_t s
 {
     auto it = cache.find(brandId);
     if (it != cache.end())
-        return it->second;        // hit (possibly a cached failure -> srv == nullptr)
+        return it->second;
 
     LogoTexture lt;
-    DecodeToTexture(device, data, size, &lt);   // on failure lt stays {nullptr,0,0}
-    cache.emplace(brandId, lt);                 // cache failures too: don't retry every click
+    DecodeToTexture(device, data, size, &lt);
+    cache.emplace(brandId, lt);
     return lt;
 }
 

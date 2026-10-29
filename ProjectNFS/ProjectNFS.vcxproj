@@ -154,7 +154,6 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="brandRepository.h" />
     <ClInclude Include="car.h" />
-    <ClInclude Include="CarBrandUI.h" />
     <ClInclude Include="carRepository.h" />
     <ClInclude Include="DatabaseConnection.h" />
     <ClInclude Include="entity.h" />
@@ -174,7 +173,6 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="brand.h" />
     <ClCompile Include="brandRepository.cpp" />
-    <ClCompile Include="CarBrandUI.cpp" />
     <ClCompile Include="carRepository.cpp" />
     <ClCompile Include="DatabaseConnection.cpp" />
     <ClCompile Include="LogoCache.cpp" />

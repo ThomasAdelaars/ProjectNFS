@@ -2,9 +2,7 @@
 
 #include "DatabaseConnection.h"
 #include "MainWindow.h"
-#include "brand.h"
 #include "brandRepository.h"
-#include "car.h"
 #include "carRepository.h"
 #include "LogoCache.h"
 
@@ -13,8 +11,7 @@
 #include <string>
 #include <vector>
 
-// Coordinates the GUI and repositories. MainWindow only draws the GUI and
-// reports user actions; Application performs database operations.
+
 class Application
 {
 public:

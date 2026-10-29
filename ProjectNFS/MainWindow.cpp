@@ -15,7 +15,7 @@ namespace
 	constexpr float kLogoBoxWidth = 200.0f;
 	constexpr float kLogoBoxHeight = 125.0f;
 	constexpr float kMaximumFormFieldWidth = 360.0f;
-	// One metric horsepower (PK/PS) is approximately 0.73549875 kW.
+
 	constexpr double kKilowattsPerPK = 0.73549875;
 
 	const char* valueOrDash(const std::string& value)
@@ -130,7 +130,7 @@ void MainWindow::render()
 	const float rightPaneWidth = std::max(0.0f, available.x - brandPaneWidth - spacing);
 
 	ImGui::BeginChild("BrandPane", ImVec2(brandPaneWidth, available.y), true);
-	drawBrandList(available.y);
+	renderBrandList(available.y);
 	ImGui::EndChild();
 
 	ImGui::SameLine();
@@ -141,7 +141,7 @@ void MainWindow::render()
 	const float contentHeight = std::max(0.0f, rightAvailable.y - footerHeight - ImGui::GetStyle().ItemSpacing.y);
 	const float brandDetailsHeight = std::min(kMaximumBrandDetailsHeight, std::max(kMinimumBrandDetailsHeight, contentHeight * 0.30f));
 
-	drawBrandDetails(brandDetailsHeight);
+	renderBrandDetails(brandDetailsHeight);
 	ImGui::Spacing();
 
 	const ImVec2 bottomAvailable = ImGui::GetContentRegionAvail();
@@ -149,13 +149,13 @@ void MainWindow::render()
 	const float carListWidth = std::max(180.0f, bottomAvailable.x * 0.48f);
 
 	ImGui::BeginChild("CarsPane", ImVec2(carListWidth, bottomPanelHeight), true);
-	drawCarList(carListWidth);
+	renderCarList(carListWidth);
 	ImGui::EndChild();
 
 	ImGui::SameLine();
 
 	ImGui::BeginChild("CarDetailsPane", ImVec2(0.0f, bottomPanelHeight), true);
-	drawCarDetails();
+	renderCarDetails();
 	ImGui::EndChild();
 
 	ImGui::TextDisabled("%s", status.c_str());
@@ -164,7 +164,7 @@ void MainWindow::render()
 	ImGui::End();
 }
 
-void MainWindow::drawBrandList(float availableHeight)
+void MainWindow::renderBrandList(float availableHeight)
 {
 	ImGui::TextUnformatted("Automerken");
 	ImGui::Separator();
@@ -201,24 +201,22 @@ void MainWindow::drawBrandList(float availableHeight)
 	{
 		if (carFormMode != CarFormMode::None)
 			status = "Sla de huidige auto op of annuleer eerst.";
-		else if (onRefreshBrands)
-			onRefreshBrands();
+		else if (onRefreshBrands) onRefreshBrands();
 	}
 	if (ImGui::Button("Afsluiten", ImVec2(-1.0f, 0.0f)))
 	{
-		if (onExitRequested)
-			onExitRequested();
+		if (onExitRequested) onExitRequested();
 	}
 }
 
-void MainWindow::drawBrandDetails(float panelHeight)
+void MainWindow::renderBrandDetails(float panelHeight)
 {
 	ImGui::BeginChild("BrandDetailsPanel", ImVec2(0.0f, panelHeight), true);
 	ImGui::TextUnformatted("Merkdetails");
 	ImGui::Separator();
 
 	ImGui::BeginChild("BrandLogoArea", ImVec2(kLogoBoxWidth + 12.0f, 0.0f), false);
-	drawLogo(kLogoBoxWidth, kLogoBoxHeight);
+	renderLogo(kLogoBoxWidth, kLogoBoxHeight);
 	ImGui::EndChild();
 	ImGui::SameLine();
 
@@ -232,7 +230,7 @@ void MainWindow::drawBrandDetails(float panelHeight)
 	ImGui::EndChild();
 }
 
-void MainWindow::drawLogo(float availableWidth, float availableHeight)
+void MainWindow::renderLogo(float availableWidth, float availableHeight)
 {
 	const ImVec2 box(availableWidth, availableHeight);
 	const ImVec2 topLeft = ImGui::GetCursorScreenPos();
@@ -265,7 +263,7 @@ void MainWindow::drawLogo(float availableWidth, float availableHeight)
 	}
 }
 
-void MainWindow::drawCarList(float panelWidth)
+void MainWindow::renderCarList(float panelWidth)
 {
 	(void)panelWidth;
 	ImGui::TextUnformatted("Auto's van geselecteerd merk");
@@ -285,7 +283,6 @@ void MainWindow::drawCarList(float panelWidth)
 
 	for (const CarListItem& car : cars)
 	{
-		// Keep the list compact; horsepower is shown in the details panel.
 		std::string label = car.modelName;
 		if (!car.typeName.empty())
 			label += " - " + car.typeName;
@@ -309,7 +306,7 @@ void MainWindow::drawCarList(float panelWidth)
 	}
 }
 
-void MainWindow::drawCarDetails()
+void MainWindow::renderCarDetails()
 {
 	ImGui::TextUnformatted("Autodetails");
 	ImGui::Separator();
@@ -362,7 +359,7 @@ void MainWindow::drawCarDetails()
 	if (carFormMode != CarFormMode::None)
 	{
 		ImGui::Spacing();
-		drawCarForm();
+		renderCarForm();
 		return;
 	}
 
@@ -379,7 +376,7 @@ void MainWindow::drawCarDetails()
 	ImGui::Spacing();
 	ImGui::TextUnformatted("Vermogenseenheid:");
 	ImGui::SameLine();
-	drawPowerUnitSelector();
+	renderPowerUnitSelector();
 
 	if (powerUnit == PowerUnit::PK)
 	{
@@ -392,14 +389,12 @@ void MainWindow::drawCarDetails()
 	}
 }
 
-void MainWindow::drawCarForm()
+void MainWindow::renderCarForm()
 {
 	const bool isAdding = carFormMode == CarFormMode::Add;
 	ImGui::TextUnformatted(isAdding ? "Nieuwe auto" : "Auto aanpassen");
 	ImGui::Separator();
 
-	// Constrain input widths to the details panel so controls cannot extend
-	// beyond the visible area on smaller resolutions.
 	const float availableWidth = ImGui::GetContentRegionAvail().x;
 	const float fieldWidth = std::max(0.0f, std::min(kMaximumFormFieldWidth, availableWidth));
 
@@ -414,7 +409,7 @@ void MainWindow::drawCarForm()
 	ImGui::Spacing();
 	ImGui::TextUnformatted("Vermogenseenheid:");
 	ImGui::SameLine();
-	drawPowerUnitSelector();
+	renderPowerUnitSelector();
 
 	if (powerUnit == PowerUnit::PK)
 	{
@@ -438,7 +433,6 @@ void MainWindow::drawCarForm()
 			}
 		}
 	}
-	ImGui::TextDisabled("De database slaat het vermogen op in PK. kW wordt omgerekend.");
 
 	ImGui::Spacing();
 	if (ImGui::Button(isAdding ? "Auto toevoegen" : "Wijzigingen opslaan", ImVec2(170.0f, 0.0f)))
@@ -472,11 +466,10 @@ void MainWindow::drawCarForm()
 	}
 
 	ImGui::SameLine();
-	if (ImGui::Button("Annuleren", ImVec2(110.0f, 0.0f)))
-		cancelCarForm();
+	if (ImGui::Button("Annuleren", ImVec2(110.0f, 0.0f))) cancelCarForm();
 }
 
-void MainWindow::drawPowerUnitSelector()
+void MainWindow::renderPowerUnitSelector()
 {
 	if (ImGui::RadioButton("PK", powerUnit == PowerUnit::PK))
 		powerUnit = PowerUnit::PK;

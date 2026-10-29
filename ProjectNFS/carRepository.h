@@ -7,7 +7,7 @@
 
 class CarRepository : public IReadRepository<Car> {
 public:
-	explicit CarRepository(DatabaseConnection& database);
+	CarRepository(DatabaseConnection& database);
 	std::vector<Car> getAll() override;
 	std::vector<Car> getCarsByBrandId(int brandID);
 

@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-// Structs passed from Application to the GUI.
 struct BrandListItem
 {
     int id = -1;
@@ -40,8 +39,6 @@ struct CarDetails
     int powerHP = 0;
 };
 
-// MainWindow draws the interface and reports user actions through callbacks.
-// Application handles the database operations.
 class MainWindow
 {
 public:
@@ -60,7 +57,6 @@ public:
     int getSelectedBrandId() const { return selectedBrandId; }
     int getSelectedCarId() const { return selectedCarId; }
 
-    // Application installs these callbacks and performs the actual work.
     std::function<void()> onRefreshBrands;
     std::function<void(int brandId)> onBrandSelected;
     std::function<void(int carId)> onCarSelected;
@@ -83,13 +79,13 @@ private:
         KW
     };
 
-    void drawBrandList(float availableHeight);
-    void drawBrandDetails(float panelHeight);
-    void drawCarList(float panelWidth);
-    void drawCarDetails();
-    void drawCarForm();
-    void drawPowerUnitSelector();
-    void drawLogo(float availableWidth, float availableHeight);
+    void renderBrandList(float availableHeight);
+    void renderBrandDetails(float panelHeight);
+    void renderCarList(float panelWidth);
+    void renderCarDetails();
+    void renderCarForm();
+    void renderPowerUnitSelector();
+    void renderLogo(float availableWidth, float availableHeight);
 
     void beginAddCar();
     void beginEditCar();
@@ -108,8 +104,6 @@ private:
 
     std::array<char, 128> modelNameInput{};
     std::array<char, 128> typeNameInput{};
-    // Store the value as PK because that is what the database stores.
-    // The UI can display and edit the value in either PK or kW.
     int powerHPInput = 100;
     PowerUnit powerUnit = PowerUnit::PK;
 

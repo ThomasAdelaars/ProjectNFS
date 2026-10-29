@@ -74,7 +74,7 @@ private:
     int modelID = 0;
     int brandID = 0;
     std::string modelName;
-    int typeID = -1;        // -1 betekent dat er geen type gekoppeld is.
+    int typeID = -1;
     std::string typeName;
     int powerHP = 0;
 };

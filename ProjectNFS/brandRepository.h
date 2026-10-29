@@ -9,7 +9,7 @@
 class BrandRepository : public IReadRepository<Brand>
 {
 public:
-    explicit BrandRepository(DatabaseConnection& database);
+    BrandRepository(DatabaseConnection& database);
 
     std::vector<Brand> getAll() override;
 

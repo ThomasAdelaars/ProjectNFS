@@ -30,9 +30,7 @@ void DatabaseConnection::connect()
         return;
     }
 
-    const std::string url =
-        "jdbc:mariadb://" + host + ":" +
-        std::to_string(port) + "/" + database;
+    const std::string url = "jdbc:mariadb://" + host + ":" + std::to_string(port) + "/" + database;
 
     connection.reset(
         sql::DriverManager::getConnection(

@@ -72,7 +72,7 @@ std::vector<Car> CarRepository::getCarsByBrandId(int brandID)
             result->getString("modelName").c_str()
         );
 
-        // Een type mag NULL zijn
+        // Een type mag leeg/null zijn
         if (result->isNull("typeID"))
         {
             car.setTypeID(-1);

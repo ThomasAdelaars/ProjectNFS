@@ -9,7 +9,6 @@
 
 #pragma comment(lib, "d3d11.lib")
 
-// Direct3D resources owned by the application entry point.
 static ID3D11Device* g_pd3dDevice = nullptr;
 static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
 static IDXGISwapChain* g_pSwapChain = nullptr;
@@ -28,7 +27,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 
 int main()
 {
-    // 1. Create the Win32 window.
+    // Create window
     WNDCLASSEXW wc = {
         sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L,
         GetModuleHandleW(nullptr), nullptr, nullptr, nullptr, nullptr,
@@ -41,8 +40,6 @@ int main()
         return 1;
     }
 
-    // Create a borderless fullscreen window using the primary monitor size.
-    // WS_POPUP removes the title bar and window borders.
     const int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
     const int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
 
@@ -61,7 +58,6 @@ int main()
         return 1;
     }
 
-    // 2. Initialize Direct3D.
     if (!CreateDeviceD3D(hwnd))
     {
         CleanupDeviceD3D();
@@ -74,7 +70,6 @@ int main()
     ::ShowWindow(hwnd, SW_SHOW);
     ::UpdateWindow(hwnd);
 
-    // 3. Initialize Dear ImGui.
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -94,9 +89,6 @@ int main()
         return 1;
     }
 
-    // 4. Initialize application logic, repositories and GUI callbacks.
-    // Keep Application in its own scope so LogoCache releases its Direct3D
-    // textures before the Direct3D device is destroyed below.
     {
         Application application(g_pd3dDevice);
         application.initialize();
@@ -140,9 +132,8 @@ int main()
             ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
             g_pSwapChain->Present(1, 0);
         }
-    } // Application and LogoCache destroyed while Direct3D is still available.
+    }
 
-    // 6. Clean up.
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();

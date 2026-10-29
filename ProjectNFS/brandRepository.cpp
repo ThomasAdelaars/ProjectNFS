@@ -50,13 +50,12 @@ Brand BrandRepository::getBrandDetails(int brandID)
         throw std::runtime_error("Automerk niet gevonden");
     }
 
-    // Nu kunnen we de gegevens uitlezen
     Brand brand;
 
     brand.setId(result->getInt("brandID"));
     brand.setName(result->getString("brandName").c_str());
 
-    // Het logo uit de BLOB-kolom lezen
+    // Het logo uit de BLOB kolom lezen
     std::unique_ptr<std::istream> logoStream(
         result->getBlob("logo")
     );
