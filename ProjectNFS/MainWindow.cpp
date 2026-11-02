@@ -86,8 +86,12 @@ void MainWindow::refreshData()
 		std::vector<BrandListItem> brandItems;
 		brandItems.reserve(loadedBrands.size());
 
-		for (const Brand& brand : loadedBrands)
+		for (int i = 0; i < loadedBrands.size(); i++)
+		{
+			const Brand& brand = loadedBrands[i];
+
 			brandItems.push_back({ brand.getId(), brand.getName() });
+		}
 
 		brandCount = brandItems.size();
 		setBrands(brandItems);
@@ -119,15 +123,16 @@ void MainWindow::refreshData()
 	{
 		brandSelected(selectedBrandId);
 		if (!carsLoaded)
+		{
 			setStatus("Merk geladen, maar de autolijst kon niet worden opgehaald.");
+		}
 	}
 	else if (selectedBrandId < 0)
 	{
 		clearBrandSelection();
 		if (brandsLoaded && carsLoaded)
 		{
-			setStatus("Merken geladen: " + std::to_string(brandCount) +
-				" | Auto's geladen: " + std::to_string(allCars.size()));
+			setStatus("Merken geladen: " + std::to_string(brandCount) + " | Auto's geladen: " + std::to_string(allCars.size()));
 		}
 		else if (brandsLoaded && !carsLoaded)
 		{
@@ -162,10 +167,14 @@ void MainWindow::brandSelected(int brandId)
 		setBrandDetails(details);
 
 		std::vector<CarListItem> carItems;
-		for (const Car& car : allCars)
+		for (std::size_t i = 0; i < allCars.size(); i++)
 		{
+			const Car& car = allCars[i];
+
 			if (car.getBrandID() != brandId)
+			{
 				continue;
+			}
 
 			carItems.push_back({ car.getId(), car.getModelName(), car.getTypeName() });
 		}
@@ -210,13 +219,14 @@ void MainWindow::carSelected(int carId)
 	setStatus("Auto geselecteerd: " + selectedCar->getDisplayName());
 }
 
-void MainWindow::addCar(int brandId, const std::string& modelName,
-	const std::string& typeName, int powerHP)
+void MainWindow::addCar(int brandId, const std::string& modelName, const std::string& typeName, int powerHP)
 {
 	try
 	{
 		if (brandId < 0 || brandId != selectedBrandId)
+		{
 			throw std::runtime_error("Selecteer eerst een geldig automerk.");
+		}
 
 		database.connect();
 		carRepository.addCar(brandId, modelName, typeName, powerHP);
@@ -238,7 +248,9 @@ void MainWindow::addCar(int brandId, const std::string& modelName,
 		}
 
 		if (addedCarId >= 0)
+		{
 			carSelected(addedCarId);
+		}
 
 		setStatus("Auto succesvol toegevoegd.");
 	}
@@ -249,8 +261,7 @@ void MainWindow::addCar(int brandId, const std::string& modelName,
 	}
 }
 
-void MainWindow::updateCar(int carId, const std::string& modelName,
-	const std::string& typeName, int powerHP)
+void MainWindow::updateCar(int carId, const std::string& modelName, const std::string& typeName, int powerHP)
 {
 	try
 	{
@@ -265,8 +276,9 @@ void MainWindow::updateCar(int carId, const std::string& modelName,
 		}
 
 		if (selectedCar == nullptr)
+		{
 			throw std::runtime_error("De geselecteerde auto hoort niet bij het geselecteerde merk.");
-
+		}
 		const int brandId = selectedCar->getBrandID();
 		database.connect();
 		carRepository.updateCar(carId, modelName, typeName, powerHP);
@@ -332,11 +344,15 @@ void MainWindow::setBrands(const std::vector<BrandListItem>& newBrands)
 	for (const BrandListItem& brand : brands)
 	{
 		if (brand.id == selectedBrandId)
+		{
 			selectedBrandExists = true;
+		}
 	}
 
-	if (!selectedBrandExists)
+	if (!selectedBrandExists) 
+	{
 		clearBrandSelection();
+	}
 }
 
 void MainWindow::setBrandDetails(const BrandDetails& details)
