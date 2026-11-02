@@ -1,5 +1,9 @@
 #include "MainWindow.h"
 
+#include <exception>
+#include <stdexcept>
+#include <vector>
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -8,15 +12,15 @@
 
 namespace
 {
-	constexpr float kMinimumBrandPaneWidth = 220.0f;
-	constexpr float kPreferredBrandPaneWidth = 280.0f;
-	constexpr float kMinimumBrandDetailsHeight = 175.0f;
-	constexpr float kMaximumBrandDetailsHeight = 250.0f;
-	constexpr float kLogoBoxWidth = 200.0f;
-	constexpr float kLogoBoxHeight = 125.0f;
-	constexpr float kMaximumFormFieldWidth = 360.0f;
+	const float kMinimumBrandPaneWidth = 220.0f;
+	const float kPreferredBrandPaneWidth = 280.0f;
+	const float kMinimumBrandDetailsHeight = 175.0f;
+	const float kMaximumBrandDetailsHeight = 250.0f;
+	const float kLogoBoxWidth = 200.0f;
+	const float kLogoBoxHeight = 125.0f;
+	const float kMaximumFormFieldWidth = 360.0f;
 
-	constexpr double kKilowattsPerPK = 0.73549875;
+	const double kKilowattsPerPK = 0.73549875;
 
 	const char* valueOrDash(const std::string& value)
 	{
@@ -43,24 +47,295 @@ namespace
 
 	std::string trimWhitespace(std::string value)
 	{
-		const auto isNotSpace = [](unsigned char ch) { return std::isspace(ch) == 0; };
-		const auto first = std::find_if(value.begin(), value.end(), isNotSpace);
-		if (first == value.end())
-			return {};
+		std::size_t first = 0;
+		while (first < value.size() && std::isspace(static_cast<unsigned char>(value[first])))
+			first++;
 
-		const auto last = std::find_if(value.rbegin(), value.rend(), isNotSpace).base();
-		return std::string(first, last);
+		std::size_t last = value.size();
+		while (last > first && std::isspace(static_cast<unsigned char>(value[last - 1])))
+			last--;
+
+		return value.substr(first, last - first);
 	}
+}
+
+MainWindow::MainWindow(ID3D11Device* graphicsDevice)
+	: database("127.0.0.1", "needforspeed", "nfs", "underground"),
+	brandRepository(database),
+	carRepository(database),
+	logoCache(graphicsDevice)
+{
+	status = "Database nog niet verbonden.";
+}
+
+void MainWindow::initialize()
+{
+	refreshData();
+}
+
+void MainWindow::refreshData()
+{
+	bool brandsLoaded = false;
+	std::size_t brandCount = 0;
+
+	try
+	{
+		database.connect();
+		const std::vector<Brand> loadedBrands = brandRepository.getAll();
+		database.disconnect();
+		std::vector<BrandListItem> brandItems;
+		brandItems.reserve(loadedBrands.size());
+
+		for (const Brand& brand : loadedBrands)
+			brandItems.push_back({ brand.getId(), brand.getName() });
+
+		brandCount = brandItems.size();
+		setBrands(brandItems);
+		brandsLoaded = true;
+	}
+	catch (const std::exception& e)
+	{
+		database.disconnect();
+		setStatus(std::string("Merken laden mislukt: ") + e.what());
+	}
+
+	bool carsLoaded = false;
+	try
+	{
+		database.connect();
+		allCars = carRepository.getAll();
+		database.disconnect();
+		carsLoaded = true;
+	}
+	catch (const std::exception& e)
+	{
+		database.disconnect();
+		allCars.clear();
+		setCars({});
+		setStatus(std::string("Auto's laden mislukt: ") + e.what());
+	}
+
+	if (selectedBrandId >= 0 && brandsLoaded)
+	{
+		brandSelected(selectedBrandId);
+		if (!carsLoaded)
+			setStatus("Merk geladen, maar de autolijst kon niet worden opgehaald.");
+	}
+	else if (selectedBrandId < 0)
+	{
+		clearBrandSelection();
+		if (brandsLoaded && carsLoaded)
+		{
+			setStatus("Merken geladen: " + std::to_string(brandCount) +
+				" | Auto's geladen: " + std::to_string(allCars.size()));
+		}
+		else if (brandsLoaded && !carsLoaded)
+		{
+			setStatus("Merken geladen: " + std::to_string(brandCount) +
+				". Auto's konden niet worden geladen.");
+		}
+	}
+}
+
+void MainWindow::brandSelected(int brandId)
+{
+	try
+	{
+		database.connect();
+		const Brand brand = brandRepository.getBrandDetails(brandId);
+		database.disconnect();
+
+		BrandDetails details;
+		details.id = brand.getId();
+		details.name = brand.getName();
+		details.cityName = brand.getCityName();
+		details.countryName = brand.getCountryName();
+
+		const auto& logoBytes = brand.getLogo();
+		const LogoTexture texture = logoCache.get(
+			brandId,
+			logoBytes.empty() ? nullptr : logoBytes.data(),
+			logoBytes.size());
+		details.logoTexture = (ImTextureID)texture.srv;
+		details.logoWidth = texture.width;
+		details.logoHeight = texture.height;
+		setBrandDetails(details);
+
+		std::vector<CarListItem> carItems;
+		for (const Car& car : allCars)
+		{
+			if (car.getBrandID() != brandId)
+				continue;
+
+			carItems.push_back({ car.getId(), car.getModelName(), car.getTypeName() });
+		}
+
+		setCars(carItems);
+		setStatus("Merk geselecteerd: " + brand.getName() +
+			" | Auto's: " + std::to_string(carItems.size()));
+	}
+	catch (const std::exception& e)
+	{
+		database.disconnect();
+		clearBrandSelection();
+		setStatus(std::string("Merk laden mislukt: ") + e.what());
+	}
+}
+
+void MainWindow::carSelected(int carId)
+{
+	const Car* selectedCar = nullptr;
+	for (const Car& car : allCars)
+	{
+		if (car.getId() == carId && car.getBrandID() == selectedBrandId)
+		{
+			selectedCar = &car;
+			break;
+		}
+	}
+
+	if (selectedCar == nullptr)
+	{
+		setCarDetails(CarDetails{});
+		setStatus("De geselecteerde auto kon niet worden gevonden.");
+		return;
+	}
+
+	CarDetails details;
+	details.id = selectedCar->getId();
+	details.modelName = selectedCar->getModelName();
+	details.typeName = selectedCar->getTypeName();
+	details.powerHP = selectedCar->getPowerHP();
+	setCarDetails(details);
+	setStatus("Auto geselecteerd: " + selectedCar->getDisplayName());
+}
+
+void MainWindow::addCar(int brandId, const std::string& modelName,
+	const std::string& typeName, int powerHP)
+{
+	try
+	{
+		if (brandId < 0 || brandId != selectedBrandId)
+			throw std::runtime_error("Selecteer eerst een geldig automerk.");
+
+		database.connect();
+		carRepository.addCar(brandId, modelName, typeName, powerHP);
+		database.disconnect();
+		closeCarForm();
+		reloadCarsForBrand(brandId);
+
+		int addedCarId = -1;
+		for (const Car& car : allCars)
+		{
+			if (car.getBrandID() == brandId &&
+				car.getModelName() == modelName &&
+				car.getTypeName() == typeName &&
+				car.getPowerHP() == powerHP)
+			{
+				addedCarId = car.getId();
+				break;
+			}
+		}
+
+		if (addedCarId >= 0)
+			carSelected(addedCarId);
+
+		setStatus("Auto succesvol toegevoegd.");
+	}
+	catch (const std::exception& e)
+	{
+		database.disconnect();
+		setStatus(std::string("Auto toevoegen mislukt: ") + e.what());
+	}
+}
+
+void MainWindow::updateCar(int carId, const std::string& modelName,
+	const std::string& typeName, int powerHP)
+{
+	try
+	{
+		const Car* selectedCar = nullptr;
+		for (const Car& car : allCars)
+		{
+			if (car.getId() == carId && car.getBrandID() == selectedBrandId)
+			{
+				selectedCar = &car;
+				break;
+			}
+		}
+
+		if (selectedCar == nullptr)
+			throw std::runtime_error("De geselecteerde auto hoort niet bij het geselecteerde merk.");
+
+		const int brandId = selectedCar->getBrandID();
+		database.connect();
+		carRepository.updateCar(carId, modelName, typeName, powerHP);
+		database.disconnect();
+		closeCarForm();
+		reloadCarsForBrand(brandId);
+		carSelected(carId);
+		setStatus("Auto succesvol aangepast.");
+	}
+	catch (const std::exception& e)
+	{
+		database.disconnect();
+		setStatus(std::string("Auto aanpassen mislukt: ") + e.what());
+	}
+}
+
+void MainWindow::deleteCar(int carId)
+{
+	try
+	{
+		const Car* selectedCar = nullptr;
+		for (const Car& car : allCars)
+		{
+			if (car.getId() == carId && car.getBrandID() == selectedBrandId)
+			{
+				selectedCar = &car;
+				break;
+			}
+		}
+
+		if (selectedCar == nullptr)
+			throw std::runtime_error("De geselecteerde auto kon niet worden gevonden.");
+
+		const int brandId = selectedCar->getBrandID();
+		database.connect();
+		carRepository.deleteCar(carId);
+		database.disconnect();
+		closeCarForm();
+		reloadCarsForBrand(brandId);
+		setStatus("Auto succesvol verwijderd.");
+	}
+	catch (const std::exception& e)
+	{
+		database.disconnect();
+		setStatus(std::string("Auto verwijderen mislukt: ") + e.what());
+	}
+}
+
+void MainWindow::reloadCarsForBrand(int brandId)
+{
+	database.connect();
+	allCars = carRepository.getAll();
+	database.disconnect();
+
+	brandSelected(brandId);
 }
 
 void MainWindow::setBrands(const std::vector<BrandListItem>& newBrands)
 {
 	brands = newBrands;
 
-	const auto selected = std::find_if(brands.begin(), brands.end(),
-		[this](const BrandListItem& brand) { return brand.id == selectedBrandId; });
+	bool selectedBrandExists = false;
+	for (const BrandListItem& brand : brands)
+	{
+		if (brand.id == selectedBrandId)
+			selectedBrandExists = true;
+	}
 
-	if (selected == brands.end())
+	if (!selectedBrandExists)
 		clearBrandSelection();
 }
 
@@ -189,24 +464,15 @@ void MainWindow::renderBrandList(float availableHeight)
 				brandDetails = BrandDetails{};
 				carDetails = CarDetails{};
 				cars.clear();
-				if (onBrandSelected)
-					onBrandSelected(brand.id);
+				brandSelected(brand.id);
 			}
 		}
 		ImGui::PopID();
 	}
 	ImGui::EndChild();
 
-	if (ImGui::Button("Merken vernieuwen", ImVec2(-1.0f, 0.0f)))
-	{
-		if (carFormMode != CarFormMode::None)
-			status = "Sla de huidige auto op of annuleer eerst.";
-		else if (onRefreshBrands) onRefreshBrands();
-	}
 	if (ImGui::Button("Afsluiten", ImVec2(-1.0f, 0.0f)))
-	{
-		if (onExitRequested) onExitRequested();
-	}
+		closeRequested = true;
 }
 
 void MainWindow::renderBrandDetails(float panelHeight)
@@ -298,8 +564,7 @@ void MainWindow::renderCarList(float panelWidth)
 			{
 				selectedCarId = car.id;
 				carDetails = CarDetails{};
-				if (onCarSelected)
-					onCarSelected(car.id);
+				carSelected(car.id);
 			}
 		}
 		ImGui::PopID();
@@ -345,8 +610,8 @@ void MainWindow::renderCarDetails()
 			if (ImGui::Button("Ja, verwijderen", ImVec2(140.0f, 0.0f)))
 			{
 				const int carId = selectedCarId;
-				if (onDeleteCar && carId >= 0)
-					onDeleteCar(carId);
+				if (carId >= 0)
+					deleteCar(carId);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
@@ -451,17 +716,11 @@ void MainWindow::renderCarForm()
 		}
 		else if (isAdding)
 		{
-			if (onAddCar)
-				onAddCar(selectedBrandId, modelName, typeName, powerHPInput);
-			else
-				status = "Toevoegen is niet gekoppeld aan Application.";
+			addCar(selectedBrandId, modelName, typeName, powerHPInput);
 		}
-		else
+		else if (selectedCarId >= 0)
 		{
-			if (onUpdateCar && selectedCarId >= 0)
-				onUpdateCar(selectedCarId, modelName, typeName, powerHPInput);
-			else
-				status = "Aanpassen is niet gekoppeld aan Application.";
+			updateCar(selectedCarId, modelName, typeName, powerHPInput);
 		}
 	}
 

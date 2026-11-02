@@ -151,7 +151,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
     <ClInclude Include="brandRepository.h" />
     <ClInclude Include="car.h" />
     <ClInclude Include="carRepository.h" />
@@ -170,7 +169,6 @@
     <ClInclude Include="third_party\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
     <ClCompile Include="brand.h" />
     <ClCompile Include="brandRepository.cpp" />
     <ClCompile Include="carRepository.cpp" />

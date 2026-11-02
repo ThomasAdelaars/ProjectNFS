@@ -48,28 +48,28 @@
     <ClInclude Include="third_party\imgui\backends\imgui_impl_win32.h">
       <Filter>Third Party\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="database.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="queries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="country.h">
+    <ClInclude Include="brandRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="city.h">
+    <ClInclude Include="car.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="carRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="modeltype.h">
+    <ClInclude Include="DatabaseConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="type.h">
+    <ClInclude Include="IreadRepository.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,25 +95,25 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="country.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="brand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="brand.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="city.cpp">
+    <ClCompile Include="brandRepository.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="carRepository.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="modeltype.cpp">
+    <ClCompile Include="DatabaseConnection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="type.cpp">
+    <ClCompile Include="LogoCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogoCache.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,20 +4,9 @@
 class Entity
 {
 public:
-	virtual ~Entity() = default;
+    virtual ~Entity() = default;
 
-	int getId() const
-	{
-		return id;
-	}
-
-	void setId(int value)
-	{
-		id = value;
-	}
-
-	virtual std::string getDisplayName() const = 0;
-
-protected:
-	int id = 0;
+    virtual int getId() const = 0;
+    virtual void setId(int value) = 0;
+    virtual std::string getDisplayName() const = 0;
 };

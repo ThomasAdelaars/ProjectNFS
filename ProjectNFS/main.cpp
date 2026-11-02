@@ -1,7 +1,7 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
-#include "Application.h"
+#include "MainWindow.h"
 
 #include <d3d11.h>
 #include <windows.h>
@@ -9,6 +9,7 @@
 
 #pragma comment(lib, "d3d11.lib")
 
+// Direct3D resources owned by the application entry point.
 static ID3D11Device* g_pd3dDevice = nullptr;
 static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
 static IDXGISwapChain* g_pSwapChain = nullptr;
@@ -27,7 +28,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 
 int main()
 {
-    // Create window
+    // 1. Create the Win32 window.
     WNDCLASSEXW wc = {
         sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L,
         GetModuleHandleW(nullptr), nullptr, nullptr, nullptr, nullptr,
@@ -40,6 +41,8 @@ int main()
         return 1;
     }
 
+    // Create a borderless fullscreen window using the primary monitor size.
+    // WS_POPUP removes the title bar and window borders.
     const int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
     const int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
 
@@ -58,6 +61,7 @@ int main()
         return 1;
     }
 
+    // 2. Initialize Direct3D.
     if (!CreateDeviceD3D(hwnd))
     {
         CleanupDeviceD3D();
@@ -70,6 +74,7 @@ int main()
     ::ShowWindow(hwnd, SW_SHOW);
     ::UpdateWindow(hwnd);
 
+    // 3. Initialize Dear ImGui.
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -89,13 +94,15 @@ int main()
         return 1;
     }
 
+    // 4. Create the window and load the database data.
+    // MainWindow is destroyed before the Direct3D device is released.
     {
-        Application application(g_pd3dDevice);
-        application.initialize();
-    
+        MainWindow mainWindow(g_pd3dDevice);
+        mainWindow.initialize();
+
         // 5. Main loop.
         bool done = false;
-        while (!done && !application.shouldClose())
+        while (!done && !mainWindow.shouldClose())
         {
             MSG msg;
             while (::PeekMessageW(&msg, nullptr, 0U, 0U, PM_REMOVE))
@@ -123,7 +130,7 @@ int main()
             ImGui_ImplWin32_NewFrame();
             ImGui::NewFrame();
     
-            application.render();
+            mainWindow.render();
     
             ImGui::Render();
             const float clearColor[4] = { 0.10f, 0.11f, 0.13f, 1.00f };
@@ -132,8 +139,9 @@ int main()
             ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
             g_pSwapChain->Present(1, 0);
         }
-    }
+    } // MainWindow and LogoCache are destroyed before Direct3D is released.
 
+    // 6. Clean up.
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();

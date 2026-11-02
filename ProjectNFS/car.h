@@ -8,6 +8,14 @@
 class Car : public Entity
 {
 public:
+    int getId() const override
+    {
+        return id;
+    }
+    void setId(int value) override
+    {
+        id = value;
+    }
     int getBrandID() const { return brandID;}
     void setBrandID(int value) { brandID = value; }
     int getModelID() const
@@ -71,6 +79,8 @@ public:
     }
 
 private:
+    int id = 0;
+    std::string name;
     int modelID = 0;
     int brandID = 0;
     std::string modelName;
