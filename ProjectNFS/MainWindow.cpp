@@ -136,8 +136,7 @@ void MainWindow::refreshData()
 		}
 		else if (brandsLoaded && !carsLoaded)
 		{
-			setStatus("Merken geladen: " + std::to_string(brandCount) +
-				". Auto's konden niet worden geladen.");
+			setStatus("Merken geladen: " + std::to_string(brandCount) + ". Auto's konden niet worden geladen.");
 		}
 	}
 }
