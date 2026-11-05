@@ -79,6 +79,7 @@ Brand BrandRepository::getBrandDetails(int brandID)
 
     brand.setCityName(result->getString("cityName").c_str());
     brand.setCountryName(result->getString("countryName").c_str());
+	brand.setVersion(result->getInt("version"));
 
     return brand;
 }

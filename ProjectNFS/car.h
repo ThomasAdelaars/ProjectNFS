@@ -78,6 +78,16 @@ public:
         return modelName + " (" + typeName + ")";
     }
 
+    int getVersion() const
+    {
+        return version;
+    }
+
+    void setVersion(int newVersion)
+    {
+        version = newVersion;
+    }
+
 private:
     int id = 0;
     std::string name;
@@ -87,4 +97,5 @@ private:
     int typeID = -1;
     std::string typeName;
     int powerHP = 0;
+	int version = 1;    
 };

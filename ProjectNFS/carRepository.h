@@ -8,14 +8,14 @@
 class CarRepository : public IReadRepository<Car> {
 public:
 	CarRepository(DatabaseConnection& database);
-	std::vector<Car> getAll() override;
-	std::vector<Car> getCarsByBrandId(int brandID);
+    std::vector<Car> getAll();
+    std::vector<Car> getCarsByBrandId(int brandID);
 
-	void addCar(int brandID, const std::string& modelName, const std::string& typeName, int powerHP);
+    void addCar(int brandID, const std::string& modelName, const std::string& typeName, int powerHP, int currentVersion);
 
-	void updateCar(int carID, const std::string& modelName, const std::string& typeName, int powerHP);
+    void updateCar(int carID, const std::string& modelName, const std::string& typeName, int powerHP, int currentVersion);
 
-	void deleteCar(int carID);
+    void deleteCar(int carID, int currentVersion);
 
 private:
 	DatabaseConnection& database;

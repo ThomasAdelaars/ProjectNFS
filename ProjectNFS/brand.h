@@ -52,10 +52,20 @@ public:
     {
         return name;
     }
+    int getVersion() const
+    {
+        return version;
+    }
+
+    void setVersion(int newVersion)
+    {
+        version = newVersion;
+    }
 private:
     int id = 0;
     std::string name;
     std::vector<std::uint8_t> logo;
     std::string cityName;
     std::string countryName;
+	int version = 1;
 };

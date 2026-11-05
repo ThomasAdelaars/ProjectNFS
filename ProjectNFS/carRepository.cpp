@@ -41,6 +41,7 @@ std::vector<Car> CarRepository::getAll()
         }
 
         car.setPowerHP(result->getInt("PowerHP"));
+		car.setVersion(result->getInt("version"));
 
         cars.push_back(std::move(car));
     }
@@ -87,6 +88,7 @@ std::vector<Car> CarRepository::getCarsByBrandId(int brandID)
         }
 
         car.setPowerHP(result->getInt("PowerHP"));
+        car.setVersion(result->getInt("version"));
 
         cars.push_back(std::move(car));
     }
@@ -98,14 +100,15 @@ void CarRepository::addCar(
     int brandID,
     const std::string& modelName,
     const std::string& typeName,
-    int powerHP
+    int powerHP,
+    int currentVersion
 )
 {
     auto& connection = database.getConnection();
 
     std::unique_ptr<sql::PreparedStatement> statement(
         connection.prepareStatement(
-            "CALL AddCar(?, ?, ?, ?)"
+            "CALL AddCar(?, ?, ?, ?, ?)"
         )
     );
 
@@ -113,6 +116,7 @@ void CarRepository::addCar(
     statement->setString(2, modelName);
     statement->setString(3, typeName);
     statement->setInt(4, powerHP);
+    statement->setInt(5, currentVersion);
 
     statement->execute();
 }
@@ -121,14 +125,15 @@ void CarRepository::updateCar(
     int carID,
     const std::string& modelName,
     const std::string& typeName,
-    int powerHP
+    int powerHP,
+	int currentVersion
 )
 {
     auto& connection = database.getConnection();
 
     std::unique_ptr<sql::PreparedStatement> statement(
         connection.prepareStatement(
-            "CALL UpdateCar(?, ?, ?, ?)"
+            "CALL UpdateCar(?, ?, ?, ?, ?)"
         )
     );
 
@@ -136,21 +141,23 @@ void CarRepository::updateCar(
     statement->setString(2, modelName);
     statement->setString(3, typeName);
     statement->setInt(4, powerHP);
+    statement->setInt(5, currentVersion);
 
     statement->execute();
 }
 
-void CarRepository::deleteCar(int carID)
+void CarRepository::deleteCar(int carID, int currentVersion)
 {
     auto& connection = database.getConnection();
 
     std::unique_ptr<sql::PreparedStatement> statement(
         connection.prepareStatement(
-            "CALL DeleteCar(?)"
+            "CALL DeleteCar(?, ?)"
         )
     );
 
     statement->setInt(1, carID);
+    statement->setInt(2, currentVersion);
 
     statement->execute();
 }

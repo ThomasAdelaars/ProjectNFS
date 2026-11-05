@@ -228,7 +228,7 @@ void MainWindow::addCar(int brandId, const std::string& modelName, const std::st
 		}
 
 		database.connect();
-		carRepository.addCar(brandId, modelName, typeName, powerHP);
+		carRepository.addCar(brandId, modelName, typeName, powerHP, 1);
 		database.disconnect();
 		closeCarForm();
 		reloadCarsForBrand(brandId);
@@ -280,7 +280,7 @@ void MainWindow::updateCar(int carId, const std::string& modelName, const std::s
 		}
 		const int brandId = selectedCar->getBrandID();
 		database.connect();
-		carRepository.updateCar(carId, modelName, typeName, powerHP);
+		carRepository.updateCar(carId, modelName, typeName, powerHP, selectedCar->getVersion());
 		database.disconnect();
 		closeCarForm();
 		reloadCarsForBrand(brandId);
@@ -313,7 +313,7 @@ void MainWindow::deleteCar(int carId)
 
 		const int brandId = selectedCar->getBrandID();
 		database.connect();
-		carRepository.deleteCar(carId);
+		carRepository.deleteCar(carId, selectedCar->getVersion());
 		database.disconnect();
 		closeCarForm();
 		reloadCarsForBrand(brandId);
